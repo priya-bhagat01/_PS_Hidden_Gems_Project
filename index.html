@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hidden Gems | Budget places near Central Railway stations</title>
+  <meta name="description" content="Find affordable, lesser-known places near Kalyan, Dombivli, Badlapur, Dadar and Ulhasnagar stations, and plan a day trip within your budget.">
+
+  <!-- Optional fonts. If you are offline, the page falls back to Georgia and system fonts. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Fraunces:opsz,wght@9..144,500;9..144,700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <a class="skip-link" href="#results-heading">Skip to places</a>
+
+  <header class="site-header">
+    <div class="wrap site-header-inner">
+      <a class="brand" href="#top">Hidden Gems</a>
+      <p class="header-note">Budget day trips from Central Railway stations</p>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <!-- HERO: the station selector is drawn as stops on a railway line -->
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="wrap">
+        <h1 id="hero-heading">Pick your station. See what is worth the ride.</h1>
+        <p class="hero-lead">
+          Lesser-known places around Dadar, Dombivli, Kalyan, Ulhasnagar and Badlapur,
+          with an honest estimate of what a visit costs a student.
+        </p>
+
+        <fieldset class="station-picker">
+          <legend>Choose a station</legend>
+          <!-- Stops are created by script.js from the STATIONS array -->
+          <div class="station-line" id="stationLine"></div>
+        </fieldset>
+
+        <noscript>
+          <p class="noscript-note">This page needs JavaScript turned on to show places and filters.</p>
+        </noscript>
+      </div>
+    </section>
+
+    <div class="wrap layout">
+
+      <!-- LEFT COLUMN: filters and results -->
+      <section class="browse" aria-label="Filters and places">
+
+        <p class="sample-banner" role="note">
+          <strong>Sample data.</strong>
+          Costs, distances and travel times below are rough placeholders, not verified facts.
+          Check each place before you rely on it.
+        </p>
+
+        <div class="filters">
+          <div class="filter-block">
+            <label for="budgetRange">Budget per person</label>
+            <output id="budgetOutput" for="budgetRange">Up to ₹1,000</output>
+            <input type="range" id="budgetRange" min="0" max="1000" step="50" value="1000" aria-describedby="budgetHint">
+            <p class="hint" id="budgetHint">Adds up entry fee, transport from the station (round trip) and food.</p>
+          </div>
+
+          <div class="filter-block">
+            <label for="sortSelect">Sort places by</label>
+            <select id="sortSelect">
+              <option value="cheapest">Lowest cost first</option>
+              <option value="nearest">Nearest to the station first</option>
+              <option value="name">Name, A to Z</option>
+            </select>
+          </div>
+
+          <fieldset class="filter-block filter-wide">
+            <legend>Interests (pick any, or none to see everything)</legend>
+            <!-- Chips are created by script.js from the INTEREST_OPTIONS array -->
+            <div class="chip-row" id="interestChips"></div>
+          </fieldset>
+
+          <div class="filter-wide filter-footer">
+            <button type="button" class="btn btn-quiet" id="resetFilters">Reset filters</button>
+          </div>
+        </div>
+
+        <div class="results-head">
+          <h2 id="results-heading" tabindex="-1">Places to visit</h2>
+          <p id="resultsSummary" role="status"></p>
+        </div>
+
+        <div class="card-grid" id="results"></div>
+
+        <div class="empty-state" id="emptyState" hidden>
+          <h3>No places match these filters</h3>
+          <p>Try a higher budget, remove an interest, or switch to another station.</p>
+          <button type="button" class="btn btn-primary" id="emptyResetButton">Reset filters</button>
+        </div>
+      </section>
+
+      <!-- RIGHT COLUMN: the Budget Day Planner.
+           Sidebar on large screens, slide-up sheet on phones. -->
+      <aside class="trip-panel" id="tripPanel" aria-labelledby="tripHeading">
+        <div class="trip-head">
+          <h2 id="tripHeading" tabindex="-1">My day trip</h2>
+          <button type="button" class="btn btn-quiet trip-close" id="closeTrip">Close</button>
+        </div>
+
+        <div class="trip-budget">
+          <label for="tripBudgetInput">Trip budget (₹ per person)</label>
+          <input type="number" id="tripBudgetInput" min="0" step="50" value="500" inputmode="numeric">
+        </div>
+
+        <div class="meter" aria-hidden="true">
+          <div class="meter-fill" id="meterFill"></div>
+        </div>
+        <p class="trip-status" id="tripStatus" role="status"></p>
+
+        <ol class="trip-list" id="tripList"></ol>
+
+        <dl class="trip-breakdown" id="tripBreakdown" hidden></dl>
+
+        <button type="button" class="btn btn-quiet" id="clearTrip" hidden>Clear trip</button>
+      </aside>
+    </div>
+  </main>
+
+  <!-- Phone-only bar that opens the trip sheet -->
+  <button type="button" class="trip-bar" id="tripBar" aria-controls="tripPanel" aria-expanded="false">
+    <span>My trip</span>
+    <span id="tripBarSummary">0 places</span>
+  </button>
+
+  <!-- Details window (native dialog: Escape key and focus handling are built in) -->
+  <dialog class="details-dialog" id="detailsDialog" aria-labelledby="detailsTitle">
+    <div class="details-inner" id="detailsContent"></div>
+  </dialog>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>
+        Hidden Gems is a college hackathon prototype. All costs are estimates per person
+        and every record is sample data until it has been verified on the ground.
+      </p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,876 @@
+/* =========================================================
+   Hidden Gems - style.css
+   Mobile-first: base styles are for phones, and the
+   @media (min-width) blocks add layout for larger screens.
+   ========================================================= */
+
+/* ---------- 1. Design tokens (colours, fonts, sizes) ---------- */
+:root {
+  --cream: #F7F0E1;        /* page background */
+  --paper: #FFFBF2;        /* card and panel background */
+  --sand: #EADFC8;         /* quiet fills, meter track */
+  --line: #D9CBAA;         /* borders */
+
+  --forest: #1F4A36;       /* primary */
+  --forest-deep: #153627;  /* darker primary for bars */
+  --terracotta: #A8472C;   /* accent (passes contrast on cream) */
+  --terracotta-soft: #F2DCD1;
+
+  --ink: #22281F;          /* body text */
+  --muted: #59604F;        /* secondary text */
+
+  --focus: #A8472C;        /* keyboard focus ring colour */
+  --radius: 14px;
+
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-body: "Figtree", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+/* ---------- 2. Base ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding-bottom: 4.5rem; /* room for the fixed trip bar on phones */
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+/* Stop the page scrolling behind an open details window */
+body:has(dialog[open]) {
+  overflow: hidden;
+}
+
+/* Makes the HTML "hidden" attribute always win, even on elements with their own display rule */
+[hidden] {
+  display: none !important;
+}
+
+h1, h2, h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: var(--forest);
+}
+
+/* One clear focus style for every interactive element */
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.wrap {
+  width: min(72rem, 100% - 2rem);
+  margin-inline: auto;
+}
+
+/* Hides something visually but keeps it available to keyboards and screen readers */
+.visually-hidden,
+.stop-input,
+.chip-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -4rem;
+  z-index: 100;
+  padding: 0.6rem 1rem;
+  background: var(--forest);
+  color: var(--cream);
+  border-radius: 8px;
+}
+.skip-link:focus {
+  top: 1rem;
+}
+
+/* ---------- 3. Buttons ---------- */
+.btn {
+  min-height: 2.75rem; /* comfortable tap target */
+  padding: 0.55rem 1.1rem;
+  font: inherit;
+  font-weight: 600;
+  border-radius: 999px;
+  border: 2px solid var(--forest);
+  background: transparent;
+  color: var(--forest);
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: var(--forest);
+  color: var(--cream);
+}
+.btn-primary:hover {
+  background: var(--forest-deep);
+}
+
+.btn-quiet:hover {
+  background: var(--forest);
+  color: var(--cream);
+}
+
+/* Shown when a place is already in the trip */
+.btn-remove {
+  border-color: var(--terracotta);
+  color: var(--terracotta);
+  background: var(--paper);
+}
+.btn-remove:hover {
+  background: var(--terracotta);
+  color: #fff;
+}
+
+/* ---------- 4. Header ---------- */
+.site-header {
+  background: var(--forest);
+  color: var(--cream);
+  border-bottom: 1px solid rgba(247, 240, 225, 0.2);
+}
+
+.site-header-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.25rem 1.5rem;
+  padding-block: 0.9rem;
+}
+
+.brand {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--cream);
+  text-decoration: none;
+}
+
+.header-note {
+  font-size: 0.95rem;
+  color: #E7DFC9;
+}
+
+/* ---------- 5. Hero and the railway-line station picker ---------- */
+.hero {
+  --focus: var(--cream); /* focus ring must be light on the dark hero */
+  background: var(--forest);
+  color: var(--cream);
+  padding-block: 2.5rem 2rem;
+}
+
+.hero h1 {
+  max-width: 18ch;
+  font-size: clamp(2.1rem, 6vw, 3.6rem);
+}
+
+.hero-lead {
+  max-width: 52ch;
+  margin-top: 1rem;
+  font-size: 1.1rem;
+  color: #E7DFC9;
+}
+
+.station-picker {
+  margin: 2rem 0 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.station-picker legend {
+  margin-bottom: 1rem;
+  padding: 0;
+  font-weight: 600;
+}
+
+.station-line {
+  display: flex;
+  overflow-x: auto;            /* scrolls sideways on narrow phones */
+  padding: 0.5rem 0.25rem 1rem;
+}
+
+.stop {
+  position: relative;
+  flex: 1 0 6.75rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  text-align: center;
+  cursor: pointer;
+}
+
+/* The track: each stop draws its own piece of the line.
+   The first and last stops draw only half so the line starts and ends at a dot. */
+.stop::before {
+  content: "";
+  position: absolute;
+  top: 0.625rem;
+  left: 0;
+  right: 0;
+  height: 0.25rem;
+  background: rgba(247, 240, 225, 0.55);
+}
+.stop:first-child::before { left: 50%; }
+.stop:last-child::before { right: 50%; }
+
+.stop-dot {
+  position: relative;
+  z-index: 1;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: var(--forest);
+  border: 4px solid var(--cream);
+  transition: transform 0.15s ease;
+}
+
+.stop-name {
+  font-weight: 600;
+}
+
+.stop-count {
+  font-size: 0.85rem;
+  color: #E7DFC9;
+}
+
+/* Selected stop: bigger terracotta dot, plus an underline so it is not colour-only */
+.stop-input:checked ~ .stop-dot {
+  background: var(--terracotta);
+  transform: scale(1.3);
+  box-shadow: 0 0 0 4px rgba(247, 240, 225, 0.3);
+}
+.stop-input:checked ~ .stop-name {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+
+/* The radio input is hidden, so show the focus ring on the dot instead */
+.stop-input:focus-visible ~ .stop-dot {
+  outline: 3px solid var(--focus);
+  outline-offset: 4px;
+}
+
+.noscript-note {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  background: var(--terracotta);
+  border-radius: 8px;
+}
+
+/* ---------- 6. Page layout ---------- */
+.layout {
+  display: block;
+  padding-block: 1.5rem 3rem;
+}
+
+.sample-banner {
+  margin-bottom: 1.25rem;
+  padding: 0.8rem 1rem;
+  background: var(--terracotta-soft);
+  border-left: 5px solid var(--terracotta);
+  border-radius: 0 8px 8px 0;
+  font-size: 0.95rem;
+}
+
+/* ---------- 7. Filters ---------- */
+.filters {
+  display: grid;
+  gap: 1.25rem;
+  padding: 1.25rem;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.filter-block {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.filter-block label,
+.filter-block legend {
+  display: inline-block;
+  padding: 0;
+  font-weight: 600;
+}
+
+#budgetOutput {
+  margin-left: 0.5rem;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--terracotta);
+}
+
+input[type="range"] {
+  display: block;
+  width: 100%;
+  margin: 0.6rem 0 0.25rem;
+  accent-color: var(--forest);
+}
+
+.hint {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+select,
+input[type="number"] {
+  display: block;
+  width: 100%;
+  min-height: 2.75rem;
+  margin-top: 0.4rem;
+  padding: 0.4rem 0.7rem;
+  font: inherit;
+  color: var(--ink);
+  background: #fff;
+  border: 2px solid var(--line);
+  border-radius: 10px;
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+}
+
+.chip {
+  position: relative;
+}
+
+.chip-label {
+  display: inline-block;
+  min-height: 2.5rem;
+  padding: 0.4rem 1rem;
+  border: 2px solid var(--forest);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--forest);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.chip-input:checked + .chip-label {
+  background: var(--forest);
+  color: var(--cream);
+}
+
+.chip-input:focus-visible + .chip-label {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+/* ---------- 8. Results heading ---------- */
+.results-head {
+  margin: 2rem 0 1rem;
+}
+
+.results-head h2 {
+  font-size: 1.7rem;
+}
+
+#resultsSummary {
+  margin-top: 0.3rem;
+  color: var(--muted);
+}
+
+/* ---------- 9. Cards (each one ends in a ticket stub showing the cost) ---------- */
+.card-grid {
+  display: grid;
+  grid-template-columns: 1fr; /* one column on phones */
+  gap: 1.5rem;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.card-body {
+  flex: 1;
+  padding: 1.25rem 1.25rem 1rem;
+}
+
+.card-top {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.station-tag,
+.status-tag {
+  padding: 0.15rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.station-tag {
+  background: var(--forest);
+  color: var(--cream);
+}
+
+.status-tag {
+  background: var(--terracotta-soft);
+  color: #7A3220;
+}
+
+.card-title {
+  font-size: 1.35rem;
+}
+
+.card-desc {
+  margin-top: 0.5rem;
+}
+
+.facts {
+  margin: 1rem 0 0;
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.95rem;
+}
+
+.facts div {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.facts dt {
+  flex: 0 0 6.5rem;
+  color: var(--muted);
+}
+
+.facts dd {
+  margin: 0;
+}
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tag-list li {
+  padding: 0.1rem 0.6rem;
+  background: var(--sand);
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+/* Ticket stub: dashed tear line with a notch on each side */
+.ticket-stub {
+  position: relative;
+  padding: 1rem 1.25rem 1.25rem;
+  border-top: 2px dashed var(--line);
+}
+
+.ticket-stub::before,
+.ticket-stub::after {
+  content: "";
+  position: absolute;
+  top: -11px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--cream); /* same as the page, so it looks like a punched hole */
+}
+.ticket-stub::before { left: -11px; }
+.ticket-stub::after { right: -11px; }
+
+.stub-cost {
+  display: grid;
+  gap: 0.1rem;
+}
+
+.stub-label {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.stub-amount {
+  font-family: var(--font-display);
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: var(--terracotta);
+  line-height: 1.1;
+}
+
+.stub-break {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.stub-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+
+/* ---------- 10. Empty state ---------- */
+.empty-state {
+  padding: 2rem 1.5rem;
+  text-align: center;
+  background: var(--paper);
+  border: 2px dashed var(--line);
+  border-radius: var(--radius);
+}
+
+.empty-state h3 {
+  font-size: 1.4rem;
+}
+
+.empty-state p {
+  max-width: 40ch;
+  margin: 0.5rem auto 1.25rem;
+  color: var(--muted);
+}
+
+/* ---------- 11. Trip planner: bottom sheet on phones ---------- */
+.trip-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 3.5rem;
+  padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom));
+  border: 0;
+  background: var(--forest-deep);
+  color: var(--cream);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.trip-panel {
+  --focus: var(--terracotta);
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 30;
+  max-height: 85vh;
+  max-height: 85dvh;
+  overflow-y: auto;
+  padding: 1rem 1.25rem 1.5rem;
+  background: var(--paper);
+  border-top: 4px solid var(--forest);
+  border-radius: 18px 18px 0 0;
+  box-shadow: 0 -12px 32px rgba(21, 54, 39, 0.3);
+  /* Closed state: slid down and hidden from keyboards too */
+  transform: translateY(105%);
+  visibility: hidden;
+  transition: transform 0.25s ease, visibility 0s linear 0.25s;
+}
+
+.trip-panel.is-open {
+  transform: none;
+  visibility: visible;
+  transition: transform 0.25s ease, visibility 0s;
+}
+
+.trip-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.trip-head h2 {
+  font-size: 1.5rem;
+}
+
+.trip-budget label {
+  font-weight: 600;
+}
+
+.meter {
+  height: 0.8rem;
+  margin-top: 1rem;
+  overflow: hidden;
+  background: var(--sand);
+  border-radius: 999px;
+}
+
+.meter-fill {
+  width: 0;
+  height: 100%;
+  background: var(--forest);
+  transition: width 0.25s ease;
+}
+
+.meter-fill.is-over {
+  background: var(--terracotta);
+}
+
+.trip-status {
+  margin-top: 0.6rem;
+  font-weight: 600;
+}
+
+.trip-status.is-over {
+  color: var(--terracotta);
+}
+
+.trip-list {
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.trip-empty {
+  margin-top: 1rem;
+  color: var(--muted);
+}
+
+.trip-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.trip-item-name {
+  font-weight: 600;
+}
+
+.trip-item-meta {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.trip-item .btn {
+  min-height: 2.5rem;
+  padding-inline: 0.8rem;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.trip-breakdown {
+  margin: 1rem 0;
+}
+
+.trip-breakdown div {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.25rem 0;
+}
+
+.trip-breakdown dt,
+.trip-breakdown dd {
+  margin: 0;
+}
+
+.trip-breakdown .is-total {
+  margin-top: 0.4rem;
+  padding-top: 0.6rem;
+  border-top: 2px solid var(--forest);
+  font-weight: 700;
+}
+
+/* ---------- 12. Details window ---------- */
+.details-dialog {
+  width: min(40rem, 100% - 1.5rem);
+  max-height: calc(100vh - 2rem);
+  max-height: calc(100dvh - 2rem);
+  padding: 0;
+  overflow-y: auto;
+  border: 0;
+  border-radius: 18px;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.details-dialog::backdrop {
+  background: rgba(21, 54, 39, 0.65);
+}
+
+.details-inner {
+  padding: 1.5rem;
+}
+
+.details-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.details-head h2 {
+  margin-top: 0.5rem;
+  font-size: 1.7rem;
+}
+
+.details-section {
+  margin-top: 1.5rem;
+}
+
+.details-section h3 {
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.cost-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.cost-table th,
+.cost-table td {
+  padding: 0.45rem 0;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  font-weight: 400;
+}
+
+.cost-table td {
+  text-align: right;
+}
+
+.cost-table .is-total th,
+.cost-table .is-total td {
+  border-bottom: 0;
+  font-weight: 700;
+  color: var(--terracotta);
+}
+
+.link-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.btn-link {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.sample-note {
+  margin-top: 1.5rem;
+  padding: 0.8rem 1rem;
+  background: var(--terracotta-soft);
+  border-left: 5px solid var(--terracotta);
+  border-radius: 0 8px 8px 0;
+  font-size: 0.95rem;
+}
+
+.details-actions {
+  margin-top: 1.5rem;
+}
+
+/* ---------- 13. Footer ---------- */
+.site-footer {
+  padding-block: 1.5rem;
+  background: var(--sand);
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+/* ---------- 14. Tablet: two card columns, two-column filters ---------- */
+@media (min-width: 40em) {
+  .card-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .filters {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .filter-wide {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ---------- 15. Desktop: trip planner becomes a sticky sidebar ---------- */
+@media (min-width: 64em) {
+  body {
+    padding-bottom: 0;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 22rem;
+    gap: 2rem;
+    align-items: start;
+  }
+
+  .trip-bar,
+  .trip-close {
+    display: none;
+  }
+
+  .trip-panel {
+    position: sticky;
+    top: 1rem;
+    max-height: calc(100vh - 2rem);
+    border: 1px solid var(--line);
+    border-top: 4px solid var(--forest);
+    border-radius: var(--radius);
+    box-shadow: none;
+    transform: none;
+    visibility: visible;
+    transition: none;
+  }
+}
+
+/* ---------- 16. Respect people who turn off animation ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+  }
+}
